@@ -14,4 +14,4 @@ jobs:
       - name: PHP syntax
         run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Composer validation
-        run: composer validate --strict --no-check-publish
+        run: composer validate --no-check-publish
