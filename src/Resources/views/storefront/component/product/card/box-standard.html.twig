@@ -1,0 +1,16 @@
+{% sw_extends '@Storefront/storefront/component/product/card/box-standard.html.twig' %}
+
+{% block component_product_box %}
+    {% set mgdThresholdEnabled = config('MgdSoldOut.config.thresholdEnabled') %}
+    {% set mgdThreshold = mgdThresholdEnabled ? config('MgdSoldOut.config.stockThreshold')|default(0) : 0 %}
+    {% set mgdOnlyCloseout = config('MgdSoldOut.config.onlyCloseoutProducts') %}
+    {% set mgdSoldOut = product.availableStock <= mgdThreshold and (not mgdOnlyCloseout or product.isCloseout) %}
+    {% set mgdStyle = config('MgdSoldOut.config.listingStyle')|default('badge') %}
+
+    <div class="mgd-soldout-box{% if mgdSoldOut and mgdStyle == 'frame' %} mgd-soldout-box--frame{% endif %}">
+        {% if mgdSoldOut and mgdStyle != 'none' %}
+            <span class="mgd-soldout-badge">{{ config('MgdSoldOut.config.labelText')|default('Ausverkauft') }}</span>
+        {% endif %}
+        {{ parent() }}
+    </div>
+{% endblock %}
