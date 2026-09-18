@@ -25,7 +25,7 @@ final class GitHubUpdateCheckTaskHandler extends ScheduledTaskHandler
         try {
             $this->updater->checkAndPrepare(Context::createDefaultContext());
         } catch (\Throwable $exception) {
-            $this->logger->warning('MGD Ausverkauft: GitHub-Updateprüfung fehlgeschlagen.', [
+            $this->exceptionLogger->warning('MGD Ausverkauft: GitHub-Updateprüfung fehlgeschlagen.', [
                 'exception' => $exception,
             ]);
         }
