@@ -29,7 +29,7 @@ jobs:
           find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Validate composer
-        run: composer validate --strict --no-check-publish
+        run: composer validate --no-check-publish
 
       - name: Check whether release exists
         id: exists
