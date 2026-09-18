@@ -1,0 +1,65 @@
+name: Build and publish release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(php -r '$c=json_decode(file_get_contents("composer.json"), true); echo $c["version"];')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate PHP
+        run: |
+          find src -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate composer
+        run: composer validate --strict --no-check-publish
+
+      - name: Check whether release exists
+        id: exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Shopware plugin ZIP
+        if: steps.exists.outputs.exists == 'false'
+        run: |
+          rm -rf build
+          mkdir -p build/MgdSoldOut
+          cp -R src composer.json LICENSE README.md build/MgdSoldOut/
+          cd build
+          zip -r ../MgdSoldOut.zip MgdSoldOut
+
+      - name: Create GitHub release
+        if: steps.exists.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$TAG" MgdSoldOut.zip \
+            --target "${GITHUB_SHA}" \
+            --title "MGD Ausverkauft $VERSION" \
+            --generate-notes

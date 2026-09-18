@@ -1,0 +1,21 @@
+{% sw_extends '@Storefront/storefront/component/buy-widget/buy-widget.html.twig' %}
+
+{% block buy_widget_buy_form %}
+    {% set mgdThresholdEnabled = config('MgdSoldOut.config.thresholdEnabled') %}
+    {% set mgdThreshold = mgdThresholdEnabled ? config('MgdSoldOut.config.stockThreshold')|default(0) : 0 %}
+    {% set mgdOnlyCloseout = config('MgdSoldOut.config.onlyCloseoutProducts') %}
+    {% set mgdSoldOut = product.availableStock <= mgdThreshold and (not mgdOnlyCloseout or product.isCloseout) %}
+    {% set mgdHideBuyArea = config('MgdSoldOut.config.hideBuyArea') %}
+
+    {% if mgdSoldOut %}
+        <div class="mgd-soldout-detail" role="status">
+            <strong class="mgd-soldout-detail__label">{{ config('MgdSoldOut.config.labelText')|default('Ausverkauft') }}</strong>
+            <span class="mgd-soldout-detail__text">{{ config('MgdSoldOut.config.detailText')|default('Dieser Artikel ist aktuell nicht verfügbar.') }}</span>
+        </div>
+        {% if not mgdHideBuyArea %}
+            {{ parent() }}
+        {% endif %}
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

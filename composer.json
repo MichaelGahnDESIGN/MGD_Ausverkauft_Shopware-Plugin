@@ -1,0 +1,35 @@
+{
+  "name": "michael-gahn-design/mgd-ausverkauft",
+  "description": "Kennzeichnet ausverkaufte Produkte in Shopware 6 und hält deren Produktseiten sichtbar.",
+  "type": "shopware-platform-plugin",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Michael Gahn DESIGN",
+      "homepage": "https://michael-gahn.de"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "shopware/core": "~6.7.0",
+    "shopware/storefront": "~6.7.0",
+    "ext-zip": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mgd\\SoldOut\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "Mgd\\SoldOut\\MgdSoldOut",
+    "label": {
+      "de-DE": "MGD Ausverkauft",
+      "en-GB": "MGD Sold Out"
+    },
+    "description": {
+      "de-DE": "Ausverkaufte Produkte sichtbar halten, kennzeichnen und den Kaufbereich ausblenden.",
+      "en-GB": "Keep sold-out products visible, mark them and hide their purchase controls."
+    }
+  }
+}
