@@ -38,6 +38,9 @@ Das Plugin ist insbesondere für Shops gedacht, in denen ausverkaufte Produkte a
 * Konfiguration über die Shopware-Plugin-Einstellungen
 * keine Änderung an Shopware-Core-Dateien
 * updatesichere Storefront-Erweiterung über Twig und SCSS
+* integrierte GitHub-Release-Prüfung
+* neue Releases werden automatisch vorbereitet und anschließend als natives Shopware-Plugin-Update angeboten
+* Release-ZIP wird automatisch über GitHub Actions erzeugt
 
 ## Beispiel der Bestandsgrenze
 
@@ -143,9 +146,47 @@ Das Plugin soll nicht pauschal einen Varianten-Hauptartikel als ausverkauft mark
 | --- | --- |
 | Shopware | 6.7.x |
 | PHP | ab 8.2 |
+| PHP-Erweiterung | ext-zip |
+| Netzwerk | ausgehendes HTTPS zu api.github.com und GitHub Release Assets |
 | Storefront | Shopware Storefront / kompatibles Child Theme |
 | Installation | Shopware Administration oder CLI |
 | Lizenz | GPL-2.0-or-later |
+
+## Updates direkt über GitHub
+
+MGD Ausverkauft besitzt einen eigenen GitHub-Release-Updater. Shopware prüft über einen Scheduled Task regelmäßig das öffentliche GitHub-Repository auf eine neuere Release-Version.
+
+Der Ablauf ist bewusst zweistufig:
+
+1. Das Plugin fragt GitHubs `releases/latest` API ab.
+2. Ist die dortige Version neuer als die installierte Version, wird ausschließlich das Release-Asset `MgdSoldOut.zip` heruntergeladen.
+3. Das ZIP wird auf sichere Pfade und die erwartete Plugin-Klasse geprüft.
+4. Die neuen Plugin-Dateien werden vorbereitet.
+5. Shopwares Plugin-Liste wird über den nativen `PluginService` aktualisiert.
+6. Shopware erkennt dadurch die höhere Dateiversion und kann das eigentliche Plugin-Update über seinen normalen Update-Mechanismus ausführen.
+
+Damit bleibt die eigentliche Lifecycle-Aktualisierung bei Shopware. Der GitHub-Updater führt nicht eigenmächtig Datenbankmigrationen aus.
+
+Die automatische Prüfung läuft standardmäßig alle sechs Stunden. Voraussetzung ist, dass Shopwares Scheduled Tasks beziehungsweise die Message Queue regulär verarbeitet werden und der Server ausgehende HTTPS-Verbindungen zu GitHub herstellen darf.
+
+> [!IMPORTANT]
+> GitHub-Releases müssen ein Asset mit exakt dem Namen `MgdSoldOut.zip` enthalten. Das im Repository enthaltene Release-Workflow erzeugt dieses ZIP automatisch.
+
+> [!NOTE]
+> GitHub ist bei diesem Plugin die Updatequelle. Das Plugin benötigt für die öffentliche GitHub-API keinen persönlichen GitHub-Token.
+
+## Automatischer Release-Prozess
+
+Die Workflow-Datei `.github/workflows/release.yml` liest die Version aus `composer.json`. Bei einem Push auf `main` wird geprüft, ob für `vVERSION` bereits ein GitHub-Release existiert.
+
+Existiert noch kein Release, führt GitHub Actions PHP-Syntax- und Composer-Prüfungen aus, baut anschließend ein Shopware-kompatibles ZIP mit dem Root-Ordner `MgdSoldOut` und veröffentlicht es als `MgdSoldOut.zip`.
+
+Für eine neue Version genügt damit im normalen Release-Prozess:
+
+1. Versionsnummer in `composer.json` erhöhen.
+2. Änderungen prüfen und nach `main` übernehmen.
+3. GitHub Actions baut und veröffentlicht das Release.
+4. Installierte Plugin-Instanzen erkennen die neue Release-Version bei ihrer nächsten Updateprüfung.
 
 ## Installation über die Shopware Administration
 
