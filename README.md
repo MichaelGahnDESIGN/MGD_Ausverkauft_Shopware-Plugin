@@ -257,13 +257,13 @@ Das Plugin erweitert Shopwares Standard-Twig-Templates. Themes, die dieselben Bl
 
 In diesem Fall sollte die Integration gezielt für das verwendete Theme ergänzt werden, statt Core-Dateien zu verändern.
 
-## Grenzen der Version 1.0.0
+## Serverseitige Absicherung der Bestandsgrenze
 
-Die Bestandsgrenze steuert in dieser ersten Version primär die Storefront-Darstellung und das Ausblenden des Kaufbereichs. Sie verändert Shopwares eigentliche Lagerbestandsberechnung nicht.
+Die Bestandsgrenze ist nicht nur eine optische Storefront-Funktion. Ein eigener Shopware-Cart-Validator prüft Produktpositionen serverseitig.
 
-Bei einer Bestandsgrenze größer als `0` muss vor einem produktiven Einsatz zusätzlich geprüft werden, ob Warenkorb-, API-, Schnellkauf- oder Drittanbieter-Funktionen einen Artikel unabhängig vom ausgeblendeten Storefront-Kaufbutton hinzufügen können. Für eine harte Reservierung eines Mindestbestands muss die serverseitige Warenkorbvalidierung zusätzlich abgesichert werden.
+Bei einer Grenze von beispielsweise `2` werden diese zwei Stück als Reserve behandelt. Der maximal verkaufbare Bestand ergibt sich aus `availableStock - 2`. Dadurch reicht es nicht aus, den ausgeblendeten Kaufen-Button über einen alternativen Warenkorb-, API- oder Drittanbieter-Weg zu umgehen.
 
-Diese Einschränkung ist absichtlich dokumentiert: Ein ausgeblendeter Button allein darf nicht mit einer unveränderbaren serverseitigen Verkaufssperre verwechselt werden.
+Shopwares normale Bestandsvalidierung bleibt zusätzlich aktiv. Das Plugin ersetzt sie nicht, sondern ergänzt sie um die konfigurierte Reserve.
 
 ## Entwicklung
 
@@ -290,7 +290,6 @@ composer validate --strict
 
 Für die nächsten Ausbaustufen sind insbesondere sinnvoll:
 
-* serverseitige Absicherung der frei definierten Mindestbestandsgrenze
 * eigene Behandlung weiterer Product-Box-Typen
 * erweiterte Variantenlogik
 * optionaler Hinweis „Nur noch wenige verfügbar“
