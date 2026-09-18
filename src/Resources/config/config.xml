@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Darstellung</title>
+        <title lang="en-GB">Display</title>
+
+        <input-field type="single-select">
+            <name>listingStyle</name>
+            <label>Kennzeichnung in Listings, Suche und Slidern</label>
+            <label lang="en-GB">Marking in listings, search and sliders</label>
+            <defaultValue>badge</defaultValue>
+            <options>
+                <option>
+                    <id>none</id><name>Keine Kennzeichnung</name><name lang="en-GB">No marking</name>
+                </option>
+                <option>
+                    <id>badge</id><name>Label oben rechts</name><name lang="en-GB">Badge top right</name>
+                </option>
+                <option>
+                    <id>frame</id><name>Roter Rahmen + Label</name><name lang="en-GB">Red frame + badge</name>
+                </option>
+            </options>
+        </input-field>
+
+        <input-field type="text">
+            <name>labelText</name>
+            <label>Labeltext</label>
+            <defaultValue>Ausverkauft</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>detailText</name>
+            <label>Hinweis auf der Produktdetailseite</label>
+            <defaultValue>Dieser Artikel ist aktuell nicht verfügbar.</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Bestandsgrenze</title>
+        <title lang="en-GB">Stock threshold</title>
+
+        <input-field type="bool">
+            <name>thresholdEnabled</name>
+            <label>Bestandsgrenze verwenden</label>
+            <label lang="en-GB">Use stock threshold</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <input-field type="int">
+            <name>stockThreshold</name>
+            <label>Als ausverkauft behandeln bei Bestand kleiner oder gleich</label>
+            <label lang="en-GB">Treat as sold out when stock is less than or equal to</label>
+            <defaultValue>0</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Verhalten</title>
+        <title lang="en-GB">Behaviour</title>
+
+        <input-field type="bool">
+            <name>onlyCloseoutProducts</name>
+            <label>Nur Produkte mit aktiviertem Abverkauf berücksichtigen</label>
+            <label lang="en-GB">Only apply to products marked as closeout</label>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="bool">
+            <name>hideBuyArea</name>
+            <label>Kaufbereich bei Ausverkauf ausblenden</label>
+            <label lang="en-GB">Hide purchase area when sold out</label>
+            <defaultValue>true</defaultValue>
+        </input-field>
+    </card>
+</config>
