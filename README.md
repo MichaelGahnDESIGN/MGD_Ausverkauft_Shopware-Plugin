@@ -14,6 +14,10 @@ Entwicklung: [Michael Gahn DESIGN](https://michael-gahn.de)
 
 ---
 
+## Dokumentation
+
+Das ausführliche Handbuch liegt unter [`docs/wiki/`](docs/wiki/Home.md).
+
 MGD Ausverkauft erweitert die Shopware-6-Storefront für Produkte, deren verfügbarer Bestand eine definierte Grenze erreicht. Die Produktdetailseite bleibt erreichbar, während im Shop ein deutliches **„Ausverkauft“** erscheint. In Produktlisten kann wahlweise nur ein Label oder zusätzlich ein roter Rahmen um die Produktkarte angezeigt werden.
 
 Das Plugin ist insbesondere für Shops gedacht, in denen ausverkaufte Produkte aus SEO-, Informations- oder Sortimentsgründen weiterhin erreichbar bleiben sollen.
