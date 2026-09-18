@@ -1,0 +1,44 @@
+.mgd-soldout-box {
+    position: relative;
+    height: 100%;
+}
+
+.mgd-soldout-box--frame {
+    border: 2px solid #d63638;
+    border-radius: var(--bs-border-radius, 4px);
+}
+
+.mgd-soldout-badge {
+    position: absolute;
+    z-index: 5;
+    top: .75rem;
+    right: .75rem;
+    display: inline-flex;
+    align-items: center;
+    padding: .35rem .65rem;
+    border-radius: .25rem;
+    background: #d63638;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.mgd-soldout-detail {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    margin: 1rem 0;
+    padding: .85rem 1rem;
+    border-left: 4px solid #d63638;
+    background: rgba(214, 54, 56, .08);
+}
+
+.mgd-soldout-detail__label {
+    color: #d63638;
+    font-weight: 700;
+    text-transform: uppercase;
+}
