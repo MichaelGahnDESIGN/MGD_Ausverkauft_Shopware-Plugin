@@ -7,6 +7,12 @@
 
         <service id="Mgd\SoldOut\Service\GitHubReleaseUpdater"/>
 
+        <service id="Mgd\SoldOut\Cart\StockThresholdCartValidator">
+            <argument type="service" id="sales_channel.product.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="shopware.cart.validator"/>
+        </service>
+
         <service id="Mgd\SoldOut\ScheduledTask\GitHubUpdateCheckTask">
             <tag name="shopware.scheduled.task"/>
         </service>
