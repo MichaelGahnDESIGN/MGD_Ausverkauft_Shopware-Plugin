@@ -328,3 +328,43 @@ Lizenz: **GPL-2.0-or-later**
 Entwicklung und Projekt: **Michael Gahn DESIGN**
 
 [Michael Gahn DESIGN](https://michael-gahn.de) · [GitHub-Profil](https://github.com/MichaelGahnDESIGN)
+
+<!-- MGD-LEGAL -->
+---
+
+## Lizenz
+
+Dieses Projekt steht unter der [GNU GPL v2 oder neuer](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Den vollständigen Text enthält die Datei [LICENSE](LICENSE).
+
+## Impressum
+
+**Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)**
+
+Michael Gahn DESIGN  
+Michael Gahn  
+Dr.-Theodor-Brugsch Str. 12  
+08529 Plauen  
+Sachsen  
+Deutschland
+
+Tel.: +49 (0) 151 59156639  
+E-Mail: Anfrage@Michael-Gahn.de
+
+Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:  
+Steuernummer: 223/222/02451  
+Ust-ID: DE288143343
+
+Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit.
+
+**Redaktionell verantwortlich:**
+
+Michael Gahn DESIGN  
+Michael Gahn  
+Dr.-Theodor-Brugsch Str. 12  
+08529 Plauen  
+Sachsen  
+Deutschland
+
+Tel.: +49 (0) 151 59156639  
+E-Mail: Anfrage@Michael-Gahn.de
+<!-- /MGD-LEGAL -->
