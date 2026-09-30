@@ -177,14 +177,14 @@ Der Ablauf ist bewusst zweistufig:
 
 1. Das Plugin fragt GitHubs `releases/latest` API ab.
 2. Ist die dortige Version neuer als die installierte Version, wird ausschließlich das Release-Asset `MgdSoldOut.zip` heruntergeladen.
-3. Das ZIP wird auf sichere Pfade und die erwartete Plugin-Klasse geprüft.
-4. Die neuen Plugin-Dateien werden vorbereitet.
+3. Asset-Größe, SHA-256, ZIP-Pfade, Dateitypen, Plugin-Klasse und Version werden geprüft.
+4. Die neue Version wird außerhalb des aktiven Plugin-Ordners vorbereitet und mit Sicherung ausgetauscht. Schlägt das Shopware-Refresh fehl, wird die alte Version zurückgestellt.
 5. Shopwares Plugin-Liste wird über den nativen `PluginService` aktualisiert.
 6. Shopware erkennt dadurch die höhere Dateiversion und kann das eigentliche Plugin-Update über seinen normalen Update-Mechanismus ausführen.
 
 Damit bleibt die eigentliche Lifecycle-Aktualisierung bei Shopware. Der GitHub-Updater führt nicht eigenmächtig Datenbankmigrationen aus.
 
-Die automatische Prüfung läuft standardmäßig alle sechs Stunden. Voraussetzung ist, dass Shopwares Scheduled Tasks beziehungsweise die Message Queue regulär verarbeitet werden und der Server ausgehende HTTPS-Verbindungen zu GitHub herstellen darf.
+Die automatische Prüfung läuft standardmäßig stündlich. Voraussetzung ist, dass Shopwares Scheduled Tasks beziehungsweise die Message Queue regulär verarbeitet werden und der Server ausgehende HTTPS-Verbindungen zu GitHub herstellen darf. GitHub sendet keine direkte Push-Nachricht an Shopware; tatsächliche Erkennung kann später erfolgen. Die vorherige Plugin-Version bleibt nach erfolgreicher Vorbereitung unter `var/mgd-soldout-updates/backup-*` für einen kontrollierten Rückfall erhalten.
 
 > [!IMPORTANT]
 > GitHub-Releases müssen ein Asset mit exakt dem Namen `MgdSoldOut.zip` enthalten. Das im Repository enthaltene Release-Workflow erzeugt dieses ZIP automatisch.

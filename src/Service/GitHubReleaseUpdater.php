@@ -42,8 +42,13 @@ final class GitHubReleaseUpdater
             'timeout' => 15,
         ])->toArray();
 
-        $latestVersion = ltrim((string) ($release['tag_name'] ?? ''), 'v');
-        if ($latestVersion === '' || version_compare($latestVersion, $currentVersion, '<=')) {
+        $tag = (string) ($release['tag_name'] ?? '');
+        if (!preg_match('/^v([0-9]+\.[0-9]+\.[0-9]+)$/D', $tag, $matches)
+            || ($release['draft'] ?? false) || ($release['prerelease'] ?? false)) {
+            throw new \RuntimeException('GitHub liefert kein stabiles Release mit gültigem Versionstag.');
+        }
+        $latestVersion = $matches[1];
+        if (version_compare($latestVersion, $currentVersion, '<=')) {
             return [
                 'updateAvailable' => false,
                 'downloaded' => false,
@@ -52,20 +57,26 @@ final class GitHubReleaseUpdater
             ];
         }
 
-        $assetUrl = null;
+        $asset = null;
         foreach (($release['assets'] ?? []) as $asset) {
             if (($asset['name'] ?? null) === self::ASSET_NAME) {
-                $assetUrl = $asset['browser_download_url'] ?? null;
                 break;
             }
         }
 
-        if (!\is_string($assetUrl) || $assetUrl === '') {
+        if (!\is_array($asset) || ($asset['name'] ?? null) !== self::ASSET_NAME) {
             throw new \RuntimeException(sprintf('GitHub Release %s enthält %s nicht.', $latestVersion, self::ASSET_NAME));
         }
+        $assetUrl = $asset['browser_download_url'] ?? null;
+        $digest = $asset['digest'] ?? null;
+        $size = $asset['size'] ?? null;
+        if (!\is_string($assetUrl) || !str_starts_with($assetUrl, 'https://github.com/MichaelGahnDESIGN/MGD_Ausverkauft_Shopware-Plugin/releases/download/')
+            || !\is_string($digest) || !preg_match('/^sha256:[a-f0-9]{64}$/iD', $digest)
+            || !\is_int($size) || $size < 100 || $size > 40_000_000) {
+            throw new \RuntimeException('Release-Asset besitzt keine sichere URL, Größe oder SHA-256-Prüfsumme.');
+        }
 
-        $this->installReleaseArchive($assetUrl, $latestVersion, dirname($pluginDir));
-        $this->pluginService->refreshPlugins($context, new NullIO());
+        $this->installReleaseArchive($assetUrl, $digest, $size, $latestVersion, dirname($pluginDir), $context);
 
         return [
             'updateAvailable' => true,
@@ -75,7 +86,7 @@ final class GitHubReleaseUpdater
         ];
     }
 
-    private function installReleaseArchive(string $assetUrl, string $expectedVersion, string $pluginRoot): void
+    private function installReleaseArchive(string $assetUrl, string $digest, int $size, string $expectedVersion, string $pluginRoot, Context $context): void
     {
         $tmp = sys_get_temp_dir() . '/mgd-soldout-' . bin2hex(random_bytes(8));
         if (!mkdir($tmp, 0700, true) && !is_dir($tmp)) {
@@ -89,18 +100,41 @@ final class GitHubReleaseUpdater
                 'timeout' => 60,
             ]);
 
-            file_put_contents($zipPath, $response->getContent());
+            $content = $response->getContent();
+            if (strlen($content) !== $size || strlen($content) > 40_000_000
+                || !hash_equals(substr($digest, 7), hash('sha256', $content))) {
+                throw new \RuntimeException('Release-Download ist unvollständig oder SHA-256 stimmt nicht.');
+            }
+            if (file_put_contents($zipPath, $content, LOCK_EX) !== strlen($content)) {
+                throw new \RuntimeException('Release-ZIP konnte nicht vollständig gespeichert werden.');
+            }
 
             $zip = new ZipArchive();
             if ($zip->open($zipPath) !== true) {
                 throw new \RuntimeException('Das GitHub-Release-ZIP konnte nicht geöffnet werden.');
             }
 
+            if ($zip->numFiles < 2 || $zip->numFiles > 500) {
+                $zip->close();
+                throw new \RuntimeException('Release-ZIP enthält zu viele oder zu wenige Einträge.');
+            }
+            $uncompressed = 0;
             for ($i = 0; $i < $zip->numFiles; ++$i) {
                 $name = (string) $zip->getNameIndex($i);
-                if (str_contains($name, '../') || str_starts_with($name, '/') || str_contains($name, '\\')) {
+                $stat = $zip->statIndex($i);
+                $parts = explode('/', rtrim($name, '/'));
+                $unsafe = !str_starts_with($name, 'MgdSoldOut/') || str_contains($name, '\\')
+                    || str_contains($name, "\0") || str_contains($name, '//')
+                    || \in_array('..', $parts, true) || \in_array('.', $parts, true);
+                if ($unsafe || $stat === false || $stat['size'] > 10_000_000) {
                     $zip->close();
-                    throw new \RuntimeException('Unsicherer Pfad im Release-ZIP erkannt.');
+                    throw new \RuntimeException('Unsicherer Pfad oder übergroße Datei im Release-ZIP erkannt.');
+                }
+                $uncompressed += $stat['size'];
+                if ($uncompressed > 60_000_000 || !$zip->getExternalAttributesIndex($i, $opsys, $attributes)
+                    || ($opsys === ZipArchive::OPSYS_UNIX && !\in_array(($attributes >> 16) & 0o170000, [0, 0o100000, 0o040000], true))) {
+                    $zip->close();
+                    throw new \RuntimeException('ZIP enthält zu große Inhalte oder eine Spezialdatei.');
                 }
             }
 
@@ -127,34 +161,15 @@ final class GitHubReleaseUpdater
             }
 
             $target = $pluginRoot . '/MgdSoldOut';
-            $this->mirror($source, $target);
+            $installed = json_decode((string) file_get_contents($target . '/composer.json'), true, 512, JSON_THROW_ON_ERROR);
+            if (!\is_array($installed) || ($metadata['require'] ?? null) !== ($installed['require'] ?? null)) {
+                throw new \RuntimeException('Geänderte Shopware-Abhängigkeiten benötigen einen manuell geprüften Updateweg.');
+            }
+            (new AtomicInstaller())->prepare($source, $target, function () use ($context): void {
+                $this->pluginService->refreshPlugins($context, new NullIO());
+            });
         } finally {
             $this->removeDirectory($tmp);
-        }
-    }
-
-    private function mirror(string $source, string $target): void
-    {
-        if (!is_dir($target) && !mkdir($target, 0755, true) && !is_dir($target)) {
-            throw new \RuntimeException('Plugin-Verzeichnis ist nicht beschreibbar.');
-        }
-
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        foreach ($iterator as $item) {
-            $destination = $target . '/' . $iterator->getSubPathName();
-            if ($item->isDir()) {
-                if (!is_dir($destination)) {
-                    mkdir($destination, 0755, true);
-                }
-                continue;
-            }
-            if (!copy($item->getPathname(), $destination)) {
-                throw new \RuntimeException('Update-Datei konnte nicht geschrieben werden: ' . $destination);
-            }
         }
     }
 

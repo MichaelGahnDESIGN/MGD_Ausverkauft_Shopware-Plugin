@@ -28,6 +28,9 @@ jobs:
         run: |
           find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
+      - name: Test staging and rollback
+        run: php tests/atomic-installer-test.php
+
       - name: Validate composer
         run: composer validate --no-check-publish
 
