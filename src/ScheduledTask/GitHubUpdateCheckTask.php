@@ -13,6 +13,6 @@ final class GitHubUpdateCheckTask extends ScheduledTask
 
     public static function getDefaultInterval(): int
     {
-        return 21600;
+        return 3600;
     }
 }

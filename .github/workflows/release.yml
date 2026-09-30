@@ -11,10 +11,14 @@ permissions:
 
 jobs:
   release:
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
 
       - name: Read version
         id: version
@@ -27,6 +31,11 @@ jobs:
       - name: Validate PHP
         run: |
           find src -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Test staging and rollback
+        run: |
+          php tests/atomic-installer-test.php
+          php tests/update-opt-in-test.php
 
       - name: Validate composer
         run: composer validate --no-check-publish
