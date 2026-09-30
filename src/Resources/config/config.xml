@@ -73,4 +73,18 @@
             <defaultValue>true</defaultValue>
         </input-field>
     </card>
+
+    <card>
+        <title>GitHub-Updates</title>
+        <title lang="en-GB">GitHub updates</title>
+
+        <input-field type="bool">
+            <name>automaticUpdates</name>
+            <label>Stündlich GitHub-Releases prüfen und Update vorbereiten</label>
+            <label lang="en-GB">Check GitHub releases hourly and prepare updates</label>
+            <defaultValue>false</defaultValue>
+            <helpText>Standardmäßig aus. Nur global aktivieren. Ein laufender Scheduler und Queue-Worker sowie ein Dateibackup sind erforderlich. Nach der Vorbereitung das eigentliche Update über Shopwares Pluginverwaltung ausführen.</helpText>
+            <helpText lang="en-GB">Disabled by default. Enable globally only. Requires a running scheduler, queue worker and file backup. After preparation, complete the update through Shopware's plugin manager.</helpText>
+        </input-field>
+    </card>
 </config>

@@ -184,7 +184,7 @@ Der Ablauf ist bewusst zweistufig:
 
 Damit bleibt die eigentliche Lifecycle-Aktualisierung bei Shopware. Der GitHub-Updater führt nicht eigenmächtig Datenbankmigrationen aus.
 
-Die automatische Prüfung läuft standardmäßig stündlich. Voraussetzung ist, dass Shopwares Scheduled Tasks beziehungsweise die Message Queue regulär verarbeitet werden und der Server ausgehende HTTPS-Verbindungen zu GitHub herstellen darf. GitHub sendet keine direkte Push-Nachricht an Shopware; tatsächliche Erkennung kann später erfolgen. Die vorherige Plugin-Version bleibt nach erfolgreicher Vorbereitung unter `var/mgd-soldout-updates/backup-*` für einen kontrollierten Rückfall erhalten.
+Die automatische Vorbereitung ist standardmäßig **ausgeschaltet**. Nach Dateibackup und Staging-Test kann sie unter **Erweiterungen → Meine Erweiterungen → MGD Ausverkauft → Konfiguration → GitHub-Updates** global eingeschaltet werden. Dann läuft die Prüfung höchstens stündlich, sofern Shopwares Scheduled Tasks und Message Queue verarbeitet werden und der Server GitHub per HTTPS erreichen darf. GitHub sendet keine direkte Push-Nachricht an Shopware; die Erkennung kann später erfolgen. Die vorherige Plugin-Version bleibt nach erfolgreicher Vorbereitung unter `var/mgd-soldout-updates/backup-*` für einen kontrollierten Rückfall erhalten. Anschließend muss der native Update-Schritt in Shopware ausgeführt werden.
 
 > [!IMPORTANT]
 > GitHub-Releases müssen ein Asset mit exakt dem Namen `MgdSoldOut.zip` enthalten. Das im Repository enthaltene Release-Workflow erzeugt dieses ZIP automatisch.

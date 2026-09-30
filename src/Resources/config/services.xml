@@ -20,6 +20,7 @@
         <service id="Mgd\SoldOut\ScheduledTask\GitHubUpdateCheckTaskHandler">
             <argument type="service" id="scheduled_task.repository"/>
             <argument type="service" id="logger"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <argument type="service" id="Mgd\SoldOut\Service\GitHubReleaseUpdater"/>
         </service>
     </services>

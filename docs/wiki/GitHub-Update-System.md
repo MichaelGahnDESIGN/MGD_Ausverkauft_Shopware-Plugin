@@ -6,7 +6,7 @@ https://github.com/MichaelGahnDESIGN/MGD_Ausverkauft_Shopware-Plugin
 
 ## Ablauf
 
-1. Ein Scheduled Task fragt GitHubs öffentliche `releases/latest` API ab.
+1. Nach globaler Aktivierung der standardmäßig ausgeschalteten Option `automaticUpdates` fragt ein Scheduled Task GitHubs öffentliche `releases/latest` API ab.
 2. Die Release-Version wird mit der Version in `composer.json` verglichen.
 3. Bei einer höheren Version wird das Asset `MgdSoldOut.zip` geladen.
 4. Das Archiv wird geprüft und entpackt.
@@ -20,7 +20,7 @@ Der Updater prüft die feste Release-Asset-URL, Größe und SHA-256, die erwarte
 
 ## Intervall
 
-Die Prüfung ist standardmäßig stündlich vorgesehen. Shopwares Scheduled Tasks und Message Queue müssen dafür regulär verarbeitet werden; die Umstellung bestehender Task-Einträge ist in einer echten Installation zu prüfen.
+Nach Aktivierung ist die Prüfung stündlich vorgesehen. Shopwares Scheduled Tasks und Message Queue müssen dafür regulär verarbeitet werden; die Umstellung bestehender Task-Einträge ist in einer echten Installation zu prüfen. Ohne Aktivierung erfolgen weder GitHub-Anfrage noch Dateivorbereitung durch den Hintergrundjob.
 
 ## Voraussetzungen
 
