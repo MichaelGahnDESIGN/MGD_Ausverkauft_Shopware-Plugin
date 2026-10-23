@@ -1,0 +1,12 @@
+{
+  "sources": {
+    "scripts/assets/package-lock.json": "528ec91fc6e62c24872469ad16371ae5599bceaf09f06017fb319d5f4a1fc32c",
+    "scripts/assets/package.json": "1a9db7cb052eb153703bd9801f02712a19fd9c91938fc298b75ac94e8970d731",
+    "scripts/build-assets.py": "f2a6f111aed7f6bd60da881e80bf6877426e93c78cc4fb4b4347829c10928909",
+    "src/Resources/app/storefront/src/main.js": "4d76f08adfb25cf198a26333065fa31c03ce11f32a4f0423525d68ce69d05d16",
+    "src/Resources/app/storefront/src/scss/base.scss": "d2a1986c4422876dd66907e4bc3e8d239b199f5f2a495a10bbf5858afc12db8f"
+  },
+  "outputs": {
+    "storefront/plugin.css": "453b4c690ef33adfb29bf2f82ddbfc200ea2eeaab2017650c652999142c6bb07"
+  }
+}

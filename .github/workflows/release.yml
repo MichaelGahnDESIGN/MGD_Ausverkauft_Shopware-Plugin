@@ -1,74 +1,59 @@
-name: Build and publish release
-
+name: Fertige Shopware-Releasepakete
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
   workflow_dispatch:
-
 permissions:
-  contents: write
-
+  contents: read
 jobs:
-  release:
+  package:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          php-version: '8.4'
-
-      - name: Read version
-        id: version
-        shell: bash
-        run: |
-          VERSION=$(php -r '$c=json_decode(file_get_contents("composer.json"), true); echo $c["version"];')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Validate PHP
+          node-version: '22'
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f
+        with:
+          php-version: '8.2'
+          extensions: zip, curl, mbstring
+      - name: PHP und Composer prüfen
         run: |
           find src -name '*.php' -print0 | xargs -0 -n1 php -l
-
-      - name: Test staging and rollback
+          composer validate --no-check-publish
+      - name: Assets frisch bauen und Paket erstellen
         run: |
-          php tests/atomic-installer-test.php
-          php tests/update-opt-in-test.php
-
-      - name: Validate composer
-        run: composer validate --no-check-publish
-
-      - name: Check whether release exists
-        id: exists
+          python3 scripts/build-assets.py
+          python3 scripts/build-release.py
+          python3 scripts/test-release.py
+      - name: Verhalten und Update-Sicherheit prüfen
+        run: |
+          for test in tests/*.php; do [ ! -f "$test" ] || php "$test"; done
+          for test in tests/*.test.mjs; do [ ! -f "$test" ] || node "$test"; done
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: shopware-release
+          path: dist/*
+  release:
+    if: github.event_name != 'pull_request'
+    needs: package
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: shopware-release
+          path: dist
+      - name: Geprüftes Release veröffentlichen
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.version.outputs.tag }}
         run: |
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+          VERSION=$(python3 -c 'import json; print(json.load(open("composer.json"))["version"])')
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "Diese Version ist bereits veröffentlicht; keine Assets überschreiben."
+            exit 0
           fi
-
-      - name: Build Shopware plugin ZIP
-        if: steps.exists.outputs.exists == 'false'
-        run: |
-          rm -rf build
-          mkdir -p build/MgdSoldOut
-          cp -R src composer.json LICENSE README.md build/MgdSoldOut/
-          cd build
-          zip -r ../MgdSoldOut.zip MgdSoldOut
-
-      - name: Create GitHub release
-        if: steps.exists.outputs.exists == 'false'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.version.outputs.tag }}
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          gh release create "$TAG" MgdSoldOut.zip \
-            --target "${GITHUB_SHA}" \
-            --title "MGD Ausverkauft $VERSION" \
-            --generate-notes
+          gh release create "v$VERSION" dist/* --target "$GITHUB_SHA" --title "Version $VERSION" --notes-file RELEASE.md

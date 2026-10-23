@@ -160,7 +160,7 @@ final class GitHubReleaseUpdater
                 throw new \RuntimeException('Release-Tag und Plugin-Version stimmen nicht überein.');
             }
 
-            $target = $pluginRoot . '/MgdSoldOut';
+            $target = $pluginRoot;
             $installed = json_decode((string) file_get_contents($target . '/composer.json'), true, 512, JSON_THROW_ON_ERROR);
             if (!\is_array($installed) || ($metadata['require'] ?? null) !== ($installed['require'] ?? null)) {
                 throw new \RuntimeException('Geänderte Shopware-Abhängigkeiten benötigen einen manuell geprüften Updateweg.');

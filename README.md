@@ -207,13 +207,13 @@ Für eine neue Version genügt damit im normalen Release-Prozess:
 
 ## Installation über die Shopware Administration
 
-1. Repository beziehungsweise Release als Plugin-ZIP bereitstellen.
+1. Fertiges `MgdSoldOut.zip` aus dem GitHub-Release herunterladen.
 2. In Shopware **Erweiterungen → Meine Erweiterungen** öffnen.
 3. Plugin hochladen.
 4. Plugin installieren.
 5. Plugin aktivieren.
 6. Konfiguration öffnen.
-7. Cache leeren und Theme neu kompilieren.
+7. Den normalen Shopware-Vorgang abschließen; fertige Styles sind enthalten.
 8. Einen verfügbaren und einen ausverkauften Testartikel kontrollieren.
 
 ## Installation per CLI
@@ -227,7 +227,7 @@ bin/console cache:clear
 bin/console theme:compile
 ```
 
-Nach Änderungen an der Storefront sollte das Theme erneut kompiliert werden:
+Nur bei eigener Entwicklung an zusätzlichen Theme-Quellen kann eine Theme-Kompilierung erforderlich sein. Für das fertige Release-ZIP entfällt dieser manuelle Schritt:
 
 ```bash
 bin/console cache:clear
@@ -372,3 +372,15 @@ E-Mail: Anfrage@Michael-Gahn.de
 ## Plugin-Icon – Version 1.0.2
 
 Eigenes lokales Icon in der Shopware-Erweiterungsverwaltung. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
+
+## Fertige Release-Pakete und GitHub-Updates
+
+Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Upload und GitHub-Update verwenden dasselbe geprüfte Paket. Ein manueller Administration- oder Node-Build entfällt.
+
+Die Release-Pipeline prüft PHP, Paketinhalt, Asset-Verweise und Build-Prüfsummen. Veraltete oder veränderte Build-Dateien werden beim lokalen Verpacken abgewiesen; GitHub baut die Styles bei jedem Release frisch.
+
+Der GitHub-Updater verwendet jetzt den tatsächlichen Plugin-Ordner statt eines fälschlich angehängten zweiten MgdSoldOut-Verzeichnisses. Ältere Versionen deshalb einmal per ZIP aktualisieren.
+
+Nach dem Upload bzw. der automatischen Vorbereitung unter „Erweiterungen → Meine Erweiterungen“ den normalen Shopware-Updatevorgang ausführen. Shopware übernimmt dabei seine Asset- und Cache-Schritte. Für automatische Prüfungen den Schalter in den Plugin-Einstellungen global aktivieren; ScheduledTask-Scheduler und Queue-Worker müssen laufen. Wegen der kurzen Verzeichnis-Umschaltung ein Wartungsfenster verwenden. Eine Shop-Sicherung vor Updates bleibt empfohlen.
+
+Entwicklung: `python3 scripts/build-assets.py` baut die Dateien. `python3 scripts/build-release.py` prüft den Stand und erzeugt das ZIP unter `dist/`. Ein Push auf `main` erstellt nach erfolgreichen Prüfungen das Release der in `composer.json` angegebenen Version. Bereits veröffentlichte Versionen werden niemals überschrieben.

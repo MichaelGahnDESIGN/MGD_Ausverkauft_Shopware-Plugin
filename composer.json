@@ -3,7 +3,7 @@
   "description": "Kennzeichnet ausverkaufte Produkte in Shopware 6 und hält deren Produktseiten sichtbar.",
   "type": "shopware-platform-plugin",
   "license": "GPL-2.0-or-later",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "authors": [
     {
       "name": "Michael Gahn DESIGN",
@@ -28,9 +28,17 @@
       "en-GB": "MGD Sold Out"
     },
     "description": {
-      "de-DE": "Ausverkaufte Produkte sichtbar halten, kennzeichnen und den Kaufbereich ausblenden.",
-      "en-GB": "Keep sold-out products visible, mark them and hide their purchase controls."
+      "de-DE": "Ausverkaufte Produkte sichtbar halten, deutlich kennzeichnen und den Kaufbereich ausblenden. Mit fertigen Styles, flexiblen Einstellungen und optionalen GitHub-Updates.",
+      "en-GB": "Keep sold-out products visible, clearly mark unavailable items and hide their purchase controls. Includes ready-built styles, flexible settings and optional GitHub updates."
     },
-    "plugin-icon": "src/Resources/config/plugin.png"
+    "plugin-icon": "src/Resources/config/plugin.png",
+    "manufacturerLink": {
+      "de-DE": "https://michael-gahn.de",
+      "en-GB": "https://michael-gahn.de"
+    },
+    "supportLink": {
+      "de-DE": "https://michael-gahn.de",
+      "en-GB": "https://michael-gahn.de"
+    }
   }
 }
