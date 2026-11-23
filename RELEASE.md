@@ -1,9 +1,10 @@
-# Version 1.0.3
+# Version 1.1.0
 
-Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Upload und GitHub-Update verwenden dasselbe geprüfte Paket. Ein manueller Administration- oder Node-Build entfällt.
+Brückenversion mit dem MGD Plugin-Baukasten. Deine Einstellungen bleiben, die Fachlogik ist unverändert.
 
-Die Release-Pipeline prüft PHP, Paketinhalt, Asset-Verweise und Build-Prüfsummen. Veraltete oder veränderte Build-Dateien werden beim lokalen Verpacken abgewiesen; GitHub baut die Styles bei jedem Release frisch.
+- Neue Admin-Seite **Einstellungen → Erweiterungen → MGD Ausverkauft**: Info, Updates mit Knopf „Jetzt aktualisieren“, Weitere Plugins, Installation melden.
+- Der alte GitHub-Update-Check ist abgeschaltet. Es gibt kein automatisches Update.
+- Beim Deinstallieren wird die Installation bei theme.michael-gahn.de abgemeldet.
+- Nach dem Update auf dem Server: `bin/console cache:clear`, danach `bin/console scheduled-task:register`.
 
-Der GitHub-Updater verwendet jetzt den tatsächlichen Plugin-Ordner statt eines fälschlich angehängten zweiten MgdSoldOut-Verzeichnisses. Ältere Versionen deshalb einmal per ZIP aktualisieren.
-
-Nach dem Upload bzw. der automatischen Vorbereitung unter „Erweiterungen → Meine Erweiterungen“ den normalen Shopware-Updatevorgang ausführen. Shopware übernimmt dabei seine Asset- und Cache-Schritte. Für automatische Prüfungen den Schalter in den Plugin-Einstellungen global aktivieren; ScheduledTask-Scheduler und Queue-Worker müssen laufen. Wegen der kurzen Verzeichnis-Umschaltung ein Wartungsfenster verwenden. Eine Shop-Sicherung vor Updates bleibt empfohlen.
+Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Eine Shop-Sicherung vor Updates bleibt empfohlen.

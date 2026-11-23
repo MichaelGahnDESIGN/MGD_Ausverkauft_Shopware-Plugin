@@ -2,26 +2,18 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <!-- Baukasten aus MichaThemeV5-Pro > src/Kit (bin/build-plugin-kit.php) - Info, Updates, Weitere Plugins, Installation melden -->
+    <imports>
+        <import resource="../../Kit/Platform/Shopware/Resources/config/services.xml"/>
+    </imports>
     <services>
         <defaults autowire="true" autoconfigure="true" public="false"/>
 
-        <service id="Mgd\SoldOut\Service\GitHubReleaseUpdater"/>
-
+        <!-- alter GitHub-Update-Check (Updater, Task, Handler) nicht mehr angemeldet, Dateien löschen in der Endversion -->
         <service id="Mgd\SoldOut\Cart\StockThresholdCartValidator">
             <argument type="service" id="sales_channel.product.repository"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <tag name="shopware.cart.validator"/>
-        </service>
-
-        <service id="Mgd\SoldOut\ScheduledTask\GitHubUpdateCheckTask">
-            <tag name="shopware.scheduled.task"/>
-        </service>
-
-        <service id="Mgd\SoldOut\ScheduledTask\GitHubUpdateCheckTaskHandler">
-            <argument type="service" id="scheduled_task.repository"/>
-            <argument type="service" id="logger"/>
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
-            <argument type="service" id="Mgd\SoldOut\Service\GitHubReleaseUpdater"/>
         </service>
     </services>
 </container>

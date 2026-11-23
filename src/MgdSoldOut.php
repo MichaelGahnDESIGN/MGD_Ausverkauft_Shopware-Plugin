@@ -32,6 +32,8 @@ class MgdSoldOut extends Plugin
     {
         $this->restoreCloseoutVisibilitySettings();
         parent::uninstall($uninstallContext);
+        // Deinstallieren: bei theme.michael-gahn.de abmelden, Kit-Daten nur bei "Daten löschen" weg
+        \Mgd\SoldOut\Kit\Platform\Shopware\ShopwareKit::forUninstall($uninstallContext, $this->container->get(SystemConfigService::class), 'mgd-ausverkauft-shopware')?->uninstall($uninstallContext);
     }
 
     private function keepCloseoutProductsVisible(Context $context): void

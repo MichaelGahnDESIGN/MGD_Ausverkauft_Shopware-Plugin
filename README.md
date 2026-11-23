@@ -55,8 +55,7 @@ Das Plugin ist insbesondere für Shops gedacht, in denen ausverkaufte Produkte a
 * Konfiguration über die Shopware-Plugin-Einstellungen
 * keine Änderung an Shopware-Core-Dateien
 * updatesichere Storefront-Erweiterung über Twig und SCSS
-* integrierte GitHub-Release-Prüfung
-* neue Releases werden automatisch vorbereitet und anschließend als natives Shopware-Plugin-Update angeboten
+* Admin-Seite **MGD Ausverkauft** (ab 1.1.0) mit Info, Updates (Knopf „Jetzt aktualisieren“), weiteren Plugins und dem Schalter „Installation melden“
 * Release-ZIP wird automatisch über GitHub Actions erzeugt
 
 ## Beispiel der Bestandsgrenze
@@ -169,28 +168,29 @@ Das Plugin soll nicht pauschal einen Varianten-Hauptartikel als ausverkauft mark
 | Installation | Shopware Administration oder CLI |
 | Lizenz | GPL-2.0-or-later |
 
-## Updates direkt über GitHub
+## Updates (ab 1.1.0)
 
-MGD Ausverkauft besitzt einen eigenen GitHub-Release-Updater. Shopware prüft über einen Scheduled Task regelmäßig das öffentliche GitHub-Repository auf eine neuere Release-Version.
+1. Öffne **Einstellungen → Erweiterungen → MGD Ausverkauft**.
+2. Steht dort „Version X ist verfügbar“, klicke **Jetzt aktualisieren**.
+3. Das Plugin lädt die ZIP-Datei aus dem GitHub-Release. Es prüft Größe, Prüfsumme (SHA-256) und den Inhalt der ZIP. Nur wenn alles stimmt, spielt Shopware sie ein.
+4. Danach steht dort „Fertig“. Lade die Seite neu.
+5. Klappt es nicht (zum Beispiel fehlen Schreibrechte), zeigt die Seite einen Link zur ZIP-Datei. Lade sie dann selbst unter **Erweiterungen → Meine Erweiterungen → Erweiterung hochladen** hoch und klicke beim Plugin auf **Aktualisieren**.
 
-Der Ablauf ist bewusst zweistufig:
+Den Knopf sehen nur Admins mit den Rechten „Erweiterungen hochladen“ und „Erweiterungen verwalten“. Es gibt kein automatisches Update. Vor einem Update gehören Sicherung und Wartungsfenster dazu.
 
-1. Das Plugin fragt GitHubs `releases/latest` API ab.
-2. Ist die dortige Version neuer als die installierte Version, wird ausschließlich das Release-Asset `MgdSoldOut.zip` heruntergeladen.
-3. Asset-Größe, SHA-256, ZIP-Pfade, Dateitypen, Plugin-Klasse und Version werden geprüft.
-4. Die neue Version wird außerhalb des aktiven Plugin-Ordners vorbereitet und mit Sicherung ausgetauscht. Schlägt das Shopware-Refresh fehl, wird die alte Version zurückgestellt.
-5. Shopwares Plugin-Liste wird über den nativen `PluginService` aktualisiert.
-6. Shopware erkennt dadurch die höhere Dateiversion und kann das eigentliche Plugin-Update über seinen normalen Update-Mechanismus ausführen.
+Nach dem Update auf dem Server einmal `bin/console cache:clear` und danach `bin/console scheduled-task:register` ausführen.
 
-Damit bleibt die eigentliche Lifecycle-Aktualisierung bei Shopware. Der GitHub-Updater führt nicht eigenmächtig Datenbankmigrationen aus.
+Der alte GitHub-Update-Check mit dem Schalter „GitHub-Updates“ ist seit 1.1.0 abgeschaltet. Der Schalter in den Plugin-Einstellungen hat keine Wirkung mehr und verschwindet in der Endversion.
 
-Die automatische Vorbereitung ist standardmäßig **ausgeschaltet**. Nach Dateibackup und Staging-Test kann sie unter **Erweiterungen → Meine Erweiterungen → MGD Ausverkauft → Konfiguration → GitHub-Updates** global eingeschaltet werden. Dann läuft die Prüfung höchstens stündlich, sofern Shopwares Scheduled Tasks und Message Queue verarbeitet werden und der Server GitHub per HTTPS erreichen darf. GitHub sendet keine direkte Push-Nachricht an Shopware; die Erkennung kann später erfolgen. Die vorherige Plugin-Version bleibt nach erfolgreicher Vorbereitung unter `var/mgd-soldout-updates/backup-*` für einen kontrollierten Rückfall erhalten. Anschließend muss der native Update-Schritt in Shopware ausgeführt werden.
+## Weitere Plugins (ab 1.1.0)
 
-> [!IMPORTANT]
-> GitHub-Releases müssen ein Asset mit exakt dem Namen `MgdSoldOut.zip` enthalten. Das im Repository enthaltene Release-Workflow erzeugt dieses ZIP automatisch.
+Die Liste steht auf der Seite **Einstellungen → Erweiterungen → MGD Ausverkauft**. Sie kommt von theme.michael-gahn.de und wird 15 Minuten zwischengespeichert. Es wird nichts automatisch installiert. Im Shop für Besucher gibt es keine Anfrage an theme.michael-gahn.de.
 
-> [!NOTE]
-> GitHub ist bei diesem Plugin die Updatequelle. Das Plugin benötigt für die öffentliche GitHub-API keinen persönlichen GitHub-Token.
+## Installation melden (ab 1.1.0)
+
+Das Plugin kann sich bei theme.michael-gahn.de anmelden (Plugin, Version, Shopsystem, Domain und eine zufällige Installations-ID). Der Schalter steht auf der Seite **MGD Ausverkauft**. Aus = der Eintrag wird gelöscht. Deinstallierst du das Plugin, wird der Eintrag ebenfalls gelöscht. Das Plugin funktioniert immer voll, auch ohne Meldung.
+
+Technik: gemeinsamer Plugin-Baukasten aus dem Pro-Repo (`php bin/build-plugin-kit.php … --platform=shopware6 --namespace='Mgd\SoldOut\Kit' --product=mgd-ausverkauft-shopware --technical-name=MgdSoldOut --name='MGD Ausverkauft' --catalog-slug=plugin-ausverkauft-shopware`), hier unter `src/Kit`. Diesen Ordner nicht von Hand ändern, er wird neu erzeugt.
 
 ## Automatischer Release-Prozess
 
@@ -203,7 +203,7 @@ Für eine neue Version genügt damit im normalen Release-Prozess:
 1. Versionsnummer in `composer.json` erhöhen.
 2. Änderungen prüfen und nach `main` übernehmen.
 3. GitHub Actions baut und veröffentlicht das Release.
-4. Installierte Plugin-Instanzen erkennen die neue Release-Version bei ihrer nächsten Updateprüfung.
+4. Installierte Plugin-Instanzen sehen die neue Version auf der Seite **MGD Ausverkauft** (Update-Datei auf theme.michael-gahn.de).
 
 ## Installation über die Shopware Administration
 
@@ -373,14 +373,12 @@ E-Mail: Anfrage@Michael-Gahn.de
 
 Eigenes lokales Icon in der Shopware-Erweiterungsverwaltung. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
 
-## Fertige Release-Pakete und GitHub-Updates
+## Fertige Release-Pakete und Updates
 
-Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Upload und GitHub-Update verwenden dasselbe geprüfte Paket. Ein manueller Administration- oder Node-Build entfällt.
+Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Upload und Knopf „Jetzt aktualisieren“ verwenden dasselbe geprüfte Paket. Ein manueller Administration- oder Node-Build entfällt.
 
 Die Release-Pipeline prüft PHP, Paketinhalt, Asset-Verweise und Build-Prüfsummen. Veraltete oder veränderte Build-Dateien werden beim lokalen Verpacken abgewiesen; GitHub baut die Styles bei jedem Release frisch.
 
-Der GitHub-Updater verwendet jetzt den tatsächlichen Plugin-Ordner statt eines fälschlich angehängten zweiten MgdSoldOut-Verzeichnisses. Ältere Versionen deshalb einmal per ZIP aktualisieren.
-
-Nach dem Upload bzw. der automatischen Vorbereitung unter „Erweiterungen → Meine Erweiterungen“ den normalen Shopware-Updatevorgang ausführen. Shopware übernimmt dabei seine Asset- und Cache-Schritte. Für automatische Prüfungen den Schalter in den Plugin-Einstellungen global aktivieren; ScheduledTask-Scheduler und Queue-Worker müssen laufen. Wegen der kurzen Verzeichnis-Umschaltung ein Wartungsfenster verwenden. Eine Shop-Sicherung vor Updates bleibt empfohlen.
+Nach dem Upload unter „Erweiterungen → Meine Erweiterungen“ den normalen Shopware-Updatevorgang ausführen. Shopware übernimmt dabei seine Asset- und Cache-Schritte. Eine Shop-Sicherung vor Updates bleibt empfohlen.
 
 Entwicklung: `python3 scripts/build-assets.py` baut die Dateien. `python3 scripts/build-release.py` prüft den Stand und erzeugt das ZIP unter `dist/`. Ein Push auf `main` erstellt nach erfolgreichen Prüfungen das Release der in `composer.json` angegebenen Version. Bereits veröffentlichte Versionen werden niemals überschrieben.
