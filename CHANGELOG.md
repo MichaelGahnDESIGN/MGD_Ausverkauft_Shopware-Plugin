@@ -1,5 +1,10 @@
 # Änderungen
 
+## 1.1.1 – 2026-11-24
+
+- Der alte GitHub-Update-Check ist ganz entfernt, auch der Schalter „GitHub-Updates“ in den Einstellungen. Updates laufen über die Seite **Einstellungen → Erweiterungen → MGD Ausverkauft**.
+- Nach dem Update `bin/console cache:clear`, danach `bin/console scheduled-task:register`.
+
 ## 1.1.0 – 2026-11-24
 
 Diese Version ist eine Brückenversion. Deine Einstellungen bleiben genau so, wie sie sind.

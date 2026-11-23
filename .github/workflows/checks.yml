@@ -21,9 +21,5 @@ jobs:
           php-version: ${{ matrix.php }}
       - name: PHP-Syntax
         run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
-      - name: Staging und Rückfall
-        run: |
-          php tests/atomic-installer-test.php
-          php tests/update-opt-in-test.php
       - name: Composer-Metadaten
         run: composer validate --no-check-publish

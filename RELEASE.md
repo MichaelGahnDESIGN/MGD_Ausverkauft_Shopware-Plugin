@@ -1,10 +1,5 @@
-# Version 1.1.0
+# Version 1.1.1
 
-Brückenversion mit dem MGD Plugin-Baukasten. Deine Einstellungen bleiben, die Fachlogik ist unverändert.
+Räumt auf: Der alte GitHub-Update-Check und sein Schalter sind entfernt. Updates laufen über **Einstellungen → Erweiterungen → MGD Ausverkauft** (Knopf „Jetzt aktualisieren“). Einstellungen und Fachlogik bleiben unverändert.
 
-- Neue Admin-Seite **Einstellungen → Erweiterungen → MGD Ausverkauft**: Info, Updates mit Knopf „Jetzt aktualisieren“, Weitere Plugins, Installation melden.
-- Der alte GitHub-Update-Check ist abgeschaltet. Es gibt kein automatisches Update.
-- Beim Deinstallieren wird die Installation bei theme.michael-gahn.de abgemeldet.
-- Nach dem Update auf dem Server: `bin/console cache:clear`, danach `bin/console scheduled-task:register`.
-
-Das Release-ZIP enthält alle benötigten Plugin-Dateien einschließlich fertiger CSS-/JavaScript-Dateien. Eine Shop-Sicherung vor Updates bleibt empfohlen.
+Nach dem Update auf dem Server: `bin/console cache:clear`, danach `bin/console scheduled-task:register`. Eine Shop-Sicherung vor Updates bleibt empfohlen.

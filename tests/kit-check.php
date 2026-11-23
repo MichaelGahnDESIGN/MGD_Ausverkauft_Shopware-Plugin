@@ -20,6 +20,7 @@ $check(is_file($root . '/src/Kit/Platform/Shopware/ShopwareKit.php') && is_file(
 $check(str_contains($services, '<import resource="../../Kit/Platform/Shopware/Resources/config/services.xml"/>'), 'Kit-Dienste importiert');
 $check(str_contains($routes, '<import resource="../../Kit/Platform/Shopware/Resources/config/routes.xml"/>'), 'Kit-Routen importiert');
 $check(!str_contains($services, 'GitHubReleaseUpdater') && !str_contains($services, 'GitHubUpdateCheckTask'), 'alter GitHub-Update-Check nicht mehr angemeldet');
+$check(!is_dir($root . '/src/Service') && !is_dir($root . '/src/ScheduledTask') && !str_contains($read('src/Resources/config/config.xml'), 'automaticUpdates'), 'alter Updater und Schalter raus');
 $check(str_contains($services, 'StockThresholdCartValidator'), 'Warenkorb-Prüfung bleibt angemeldet');
 $check(str_contains($kitServices, '<argument>mgd-ausverkauft-shopware</argument>') && str_contains($kitServices, '<argument>MgdSoldOut</argument>') && str_contains($kitServices, '<argument>plugin-ausverkauft-shopware</argument>'), 'Produkt, technischer Name, Katalog-Kennung');
 $check((bool) preg_match('~<argument>false</argument>\s*</service>~', $kitServices), 'Lizenz aus');

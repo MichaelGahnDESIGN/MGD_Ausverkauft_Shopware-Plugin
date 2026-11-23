@@ -180,7 +180,7 @@ Den Knopf sehen nur Admins mit den Rechten „Erweiterungen hochladen“ und „
 
 Nach dem Update auf dem Server einmal `bin/console cache:clear` und danach `bin/console scheduled-task:register` ausführen.
 
-Der alte GitHub-Update-Check mit dem Schalter „GitHub-Updates“ ist seit 1.1.0 abgeschaltet. Der Schalter in den Plugin-Einstellungen hat keine Wirkung mehr und verschwindet in der Endversion.
+Der alte GitHub-Update-Check mit dem Schalter „GitHub-Updates“ ist seit 1.1.1 entfernt.
 
 ## Weitere Plugins (ab 1.1.0)
 
