@@ -1,5 +1,9 @@
 # Änderungen
 
+## [2.1.1] - 2026-11-25
+
+- Aktueller Baukasten, einheitliche Version.
+
 ## 1.1.1 – 2026-11-24
 
 - Der alte GitHub-Update-Check ist ganz entfernt, auch der Schalter „GitHub-Updates“ in den Einstellungen. Updates laufen über die Seite **Einstellungen → Erweiterungen → MGD Ausverkauft**.

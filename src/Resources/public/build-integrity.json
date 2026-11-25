@@ -7,7 +7,7 @@
     "src/Resources/app/storefront/src/scss/base.scss": "d2a1986c4422876dd66907e4bc3e8d239b199f5f2a495a10bbf5858afc12db8f"
   },
   "outputs": {
-    "administration/js/mgd-sold-out.js": "d280ee7c27f38aadbacffce3743ea890bdb67d4094cfeb175daf0d549e69812b",
+    "administration/js/mgd-sold-out.js": "74e3909e531d60c842368ce34fb63f48e2401fdfdb38339a12fdf79ef73156c5",
     "storefront/plugin.css": "453b4c690ef33adfb29bf2f82ddbfc200ea2eeaab2017650c652999142c6bb07"
   }
 }

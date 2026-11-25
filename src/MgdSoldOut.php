@@ -8,7 +8,9 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\ActivateContext;
 use Shopware\Core\Framework\Plugin\Context\DeactivateContext;
+use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
+use Shopware\Core\Framework\Plugin\Context\UpdateContext;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class MgdSoldOut extends Plugin
@@ -16,9 +18,16 @@ class MgdSoldOut extends Plugin
     private const HIDE_CLOSEOUT_CONFIG = 'core.listing.hideCloseoutProductsWhenOutOfStock';
     private const BACKUP_CONFIG = 'MgdSoldOut.internal.previousHideCloseoutSettings';
 
+    public function postInstall(InstallContext $installContext): void
+    {
+        parent::postInstall($installContext);
+        $this->reportInstall($installContext);
+    }
+
     public function activate(ActivateContext $activateContext): void
     {
         parent::activate($activateContext);
+        $this->reportInstall($activateContext);
         $this->keepCloseoutProductsVisible($activateContext->getContext());
     }
 
@@ -26,6 +35,13 @@ class MgdSoldOut extends Plugin
     {
         $this->restoreCloseoutVisibilitySettings();
         parent::deactivate($deactivateContext);
+    }
+
+    public function postUpdate(UpdateContext $updateContext): void
+    {
+        parent::postUpdate($updateContext);
+        // nach Update sofort melden (Baukasten)
+        \Mgd\SoldOut\Kit\Platform\Shopware\ShopwareKit::forLifecycle($updateContext, $this->container->get(SystemConfigService::class), 'mgd-ausverkauft-shopware')?->reportNow();
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
@@ -99,5 +115,14 @@ class MgdSoldOut extends Plugin
         }
 
         $config->set(self::HIDE_CLOSEOUT_CONFIG, $value, $salesChannelId);
+    }
+
+    // Melden bei Install/Aktivieren (Baukasten), darf nie scheitern
+    private function reportInstall(object $context): void
+    {
+        try {
+            \Mgd\SoldOut\Kit\Platform\Shopware\ShopwareKit::forLifecycle($context, $this->container->get(SystemConfigService::class), 'mgd-ausverkauft-shopware')?->installClient()?->ping(true);
+        } catch (\Throwable) {
+        }
     }
 }

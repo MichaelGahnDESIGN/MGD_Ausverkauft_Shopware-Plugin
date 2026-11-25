@@ -25,6 +25,7 @@ $check(str_contains($services, 'StockThresholdCartValidator'), 'Warenkorb-Prüfu
 $check(str_contains($kitServices, '<argument>mgd-ausverkauft-shopware</argument>') && str_contains($kitServices, '<argument>MgdSoldOut</argument>') && str_contains($kitServices, '<argument>plugin-ausverkauft-shopware</argument>'), 'Produkt, technischer Name, Katalog-Kennung');
 $check((bool) preg_match('~<argument>false</argument>\s*</service>~', $kitServices), 'Lizenz aus');
 $check(str_contains($plugin, "ShopwareKit::forUninstall(\$uninstallContext, \$this->container->get(SystemConfigService::class), 'mgd-ausverkauft-shopware')?->uninstall(\$uninstallContext)"), 'Abmelden beim Deinstallieren');
+$check(str_contains($plugin, "ShopwareKit::forLifecycle(\$updateContext, \$this->container->get(SystemConfigService::class), 'mgd-ausverkauft-shopware')?->reportNow()"), 'Melden nach dem Update');
 $check($adminJs === $read('src/Kit/Platform/Shopware/administration/mgd-kit.js'), 'Admin-JS = Kit-Seite');
 $placeholders = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/src/Kit', FilesystemIterator::SKIP_DOTS)) as $f) {
