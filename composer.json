@@ -3,7 +3,7 @@
   "description": "Kennzeichnet ausverkaufte Produkte in Shopware 6 und hält deren Produktseiten sichtbar.",
   "type": "shopware-platform-plugin",
   "license": "GPL-2.0-or-later",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "authors": [
     {
       "name": "Michael Gahn DESIGN",

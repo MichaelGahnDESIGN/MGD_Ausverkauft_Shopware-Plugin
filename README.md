@@ -369,7 +369,7 @@ Tel.: +49 (0) 151 59156639
 E-Mail: Anfrage@Michael-Gahn.de
 <!-- /MGD-LEGAL -->
 
-## Plugin-Icon – Version 2.1.1
+## Plugin-Icon – Version 2.2.0
 
 Eigenes lokales Icon in der Shopware-Erweiterungsverwaltung. Die Grafik ist im Release-Paket enthalten; keine externen Bilddienste und keine neuen gespeicherten Daten. Vorhandene Funktionen und Einstellungen bleiben unverändert.
 

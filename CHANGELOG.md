@@ -1,5 +1,9 @@
 # Änderungen
 
+## [2.2.0] - 2026-11-28
+
+- Baukasten 1.17.0: Anmeldung auch bei Update und Aktivieren, Farbwähler-Verbesserungen.
+
 ## [2.1.1] - 2026-11-25
 
 - Aktueller Baukasten, einheitliche Version.
